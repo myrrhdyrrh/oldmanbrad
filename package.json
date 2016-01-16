@@ -1,0 +1,9 @@
+{
+	"name" : "oldmanbradbot",
+	"version" : "0.0.0",
+	"dependencies" :
+	{
+		"node-restclient": ">=0.0.1",
+		"twit" : ">=0.0.0"
+	}
+}
