@@ -77,13 +77,13 @@ function bradifyBand(bandName) {
         var syllables = data.syllables.list;
         var tweetText = replaceSyllables(syllables, word, chosenIndex, bandWords);
         console.log(tweetText);
-        //tweet(tweetText);
+        tweet(tweetText);
     }
     else{
       var syllables = guessSyllables(word);
       var tweetText = replaceSyllables(syllables, word, chosenIndex, bandWords);
       console.log(tweetText);
-      //tweet(tweetText);
+      tweet(tweetText);
     }
   });
 
