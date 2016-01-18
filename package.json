@@ -1,9 +1,16 @@
 {
-	"name" : "oldmanbradbot",
-	"version" : "0.0.0",
+	"name": "oldmanbradbot",
+	"version": "0.0.0",
+	"main": "app.js",
+	"scripts": {
+		"start": "node app.js"
+	},
 	"dependencies" :
 	{
 		"node-rest-client": ">=1.5.1",
-		"twit" : ">=0.0.0"
+		"twit": ">=0.0.0"
+	},
+	"engines": {
+		"node": "4.2.4"
 	}
 }

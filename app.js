@@ -172,5 +172,13 @@ function init() {
   eventEmitter.on('bandchosen', function() { bradifyBand(bandname); });
 }
 init();
-getRandomBand();
 
+//every 4 hours tweet
+setInterval(function() {
+  try {
+    getRandomBand();
+  }
+ catch (e) {
+    console.log(e);
+  }
+},60000*60*4);
