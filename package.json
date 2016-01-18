@@ -3,7 +3,7 @@
 	"version" : "0.0.0",
 	"dependencies" :
 	{
-		"node-restclient": ">=0.0.1",
+		"node-rest-client": ">=1.5.1",
 		"twit" : ">=0.0.0"
 	}
 }
