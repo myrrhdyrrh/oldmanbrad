@@ -22,7 +22,7 @@ var wordsApiArgs = {
 }
 var bandname = "";
 var bandurl = "";
-var ignoredWords = ["the", "of", "a"];
+var ignoredWords = ["the", "of", "a", "or"];
 
 function generateWordsUrl(word) {
   var wordsBaseUrl = 'https://wordsapiv1.p.mashape.com/words/';
@@ -72,28 +72,89 @@ function bradifyBand(bandName) {
       word = bandWords[chosenIndex];
   }
   getWordSyllables(word, function(data, response) {
-
+    console.log("chosen word: " + word);
     if(data && data.syllables && data.syllables.list) {
         var syllables = data.syllables.list;
-        if(/^[A-Z]/.test(word) && syllables.length == 1) {
-          syllables[getRandomIndex(syllables)] = "Sux";
-        }
-        else {
-          syllables[getRandomIndex(syllables)] = "sux";
-        }
-
-        var newWord = syllables.join("");
-        bandWords[chosenIndex] = newWord;
-        var newName = bandWords.join(" ");
-        var tweetText = newName +". " + bandurl;
+        var tweetText = replaceSyllables(syllables, word, chosenIndex, bandWords);
         console.log(tweetText);
-        tweet(tweetText);
+        //tweet(tweetText);
     }
     else{
-      getRandomBand();
+      var syllables = guessSyllables(word);
+      var tweetText = replaceSyllables(syllables, word, chosenIndex, bandWords);
+      console.log(tweetText);
+      //tweet(tweetText);
     }
   });
 
+}
+
+function replaceSyllables(syllables, word, chosenIndex, bandWords) {
+  var chosenSyllableIndex = getRandomIndex(syllables);
+  if(/^[A-Z]/.test(word)) {
+    var temp = syllables[0];
+    syllables[0] = capitalizeFirstLetter(temp);
+  }
+  var chosenSyllable = syllables[chosenSyllableIndex];
+  if(/^[A-Z]/.test(word) && (syllables.length == 1 ||  /^[A-Z]/.test(chosenSyllable))) {
+    syllables[chosenSyllableIndex] = "Sux";
+  }
+  else {
+    syllables[chosenSyllableIndex] = "sux";
+  }
+
+  var newWord = syllables.join("");
+  bandWords[chosenIndex] = newWord;
+  var newName = bandWords.join(" ");
+  var tweetText = newName +". " + bandurl;
+  return tweetText;
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function guessSyllables(word) {
+  word = word.toLowerCase();                                     
+  if(word.length <= 3) { return 1; }                             
+  var words = word.split(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/);
+  var out = [];
+  var out2 = [];
+  for (var i = 0; i < words.length; i++) {
+    var temp = words[i].split(/^y/);
+    for(var j = 0; j< temp.length; j++) {
+      out.push(temp[j]);
+    }
+  }
+  for (var i = 0; i < out.length; i++) {
+    var temp = out[i].split(/([aeiouy]{1,2})/g);
+    for(var j = 0; j< temp.length; j++) {
+      out2.push(temp[j]);
+    }
+  }
+  var fixedOut = [];
+  for (var i = 0; i < out2.length; i++) {
+    var current = out2[i];
+    if (current.search(/([aeiouy])/g) != -1) {
+      if(fixedOut.length == 0) {
+          fixedOut.push(current);
+      }
+      else {
+        var last = fixedOut[fixedOut.length - 1];
+        fixedOut[fixedOut.length - 1] = last + current;
+      }
+    }
+    else{
+      if(i == out2.length - 1) {
+        var last = fixedOut[fixedOut.length - 1];
+        fixedOut[fixedOut.length - 1] = last + current;
+      }
+      else{
+      fixedOut.push(current);
+      }
+    }
+  }
+  return fixedOut;
 }
 
 function tweet(text) { 
@@ -102,7 +163,7 @@ function tweet(text) {
       console.log("error: " + err);
     }
     if(reply) { 
-      console.log("reply: " + JSON.stringify(reply));
+      //console.log("reply: " + JSON.stringify(reply));
     }
   });
 }
